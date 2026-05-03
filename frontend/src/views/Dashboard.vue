@@ -3,7 +3,17 @@
     <!-- 头部 -->
     <header class="dashboard-header">
       <div class="header-content">
-        <h1 class="header-title">国证A股指数五年之锚</h1>
+        <div class="header-left">
+          <h1 class="header-title">国证A股指数五年之锚</h1>
+          <button class="guide-btn" @click="showGuide = true" title="使用说明">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="guide-icon">
+              <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.2"/>
+              <path d="M8 4.5V4.51" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <path d="M8 7.5V11.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            <span class="guide-btn-text">使用说明</span>
+          </button>
+        </div>
         <TimeRangeSelector
           v-model="chartStore.selectedRange"
           v-model:customStart="chartStore.customStartDate"
@@ -53,11 +63,14 @@
       <span>{{ chartStore.error }}</span>
       <button class="error-close" @click="chartStore.error = null">×</button>
     </div>
+
+    <!-- 使用说明弹窗 -->
+    <UsageGuideModal :visible="showGuide" @close="showGuide = false" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useChartStore } from '@/stores/chartStore'
 import type { TimeRangeOption } from '@/types/chart'
 
@@ -66,8 +79,10 @@ import RsiChart from '@/components/RsiChart.vue'
 import DrawdownChart from '@/components/DrawdownChart.vue'
 import TimeRangeSelector from '@/components/TimeRangeSelector.vue'
 import LoadingOverlay from '@/components/LoadingOverlay.vue'
+import UsageGuideModal from '@/components/UsageGuideModal.vue'
 
 const chartStore = useChartStore()
+const showGuide = ref(false)
 
 function handleRangeChange(range: TimeRangeOption) {
   chartStore.fetchData(range)
@@ -109,12 +124,47 @@ onMounted(() => {
   gap: 16px;
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .header-title {
   font-size: 20px;
   font-weight: 600;
   color: #333;
   margin: 0;
   white-space: nowrap;
+}
+
+.guide-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  background: #fafafa;
+  color: #666;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.guide-btn:hover {
+  background: #4472C4;
+  border-color: #4472C4;
+  color: white;
+}
+
+.guide-btn:active {
+  transform: scale(0.97);
+}
+
+.guide-icon {
+  flex-shrink: 0;
 }
 
 /* 主内容 */
@@ -212,9 +262,21 @@ onMounted(() => {
     align-items: stretch;
   }
 
+  .header-left {
+    justify-content: center;
+  }
+
   .header-title {
     font-size: 18px;
     text-align: center;
+  }
+
+  .guide-btn-text {
+    display: none;
+  }
+
+  .guide-btn {
+    padding: 5px 8px;
   }
 
   .dashboard-main {

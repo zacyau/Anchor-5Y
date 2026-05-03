@@ -11,7 +11,24 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
+
+const isMobile = ref(false)
+
+function handleResize() {
+  isMobile.value = window.innerWidth <= 768
+}
+
+onMounted(() => {
+  handleResize()
+  window.addEventListener('resize', handleResize, { passive: true })
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+})
+
+const xAxisInterval = computed(() => isMobile.value ? 1400 : 500)
 import { use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { LineChart } from 'echarts/charts'
@@ -134,7 +151,7 @@ const chartOption = computed(() => {
       axisLabel: {
         color: '#666',
         fontSize: 11,
-        interval: 500,
+        interval: xAxisInterval.value,
         formatter: (value: string) => {
           return value.substring(0, 4)
         }

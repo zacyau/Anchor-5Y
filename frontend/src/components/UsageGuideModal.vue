@@ -23,7 +23,7 @@
 
           <div class="modal-body">
             <div class="disclaimer-box">
-              <strong>【声明】</strong>本内容仅作为投资策略参考，不构成任何具体的投资建议。投资者应根据自身风险承受能力、投资目标和财务状况独立做出独立的投资决策。
+              <strong>【声明】</strong>本内容仅作为投资策略参考，不构成任何具体的投资建议。投资者应根据自身风险承受能力、投资目标和财务状况做出独立的投资决策。
             </div>
 
             <section class="guide-section">

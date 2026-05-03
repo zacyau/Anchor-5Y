@@ -73,7 +73,7 @@
 import { ref, nextTick, onMounted, onUnmounted } from 'vue'
 import type { TimeRangeOption } from '@/types/chart'
 
-const ADMIN_PASSWORD = 'admin123'
+const ADMIN_PASSWORD = '8730'
 
 interface Props {
   modelValue: TimeRangeOption

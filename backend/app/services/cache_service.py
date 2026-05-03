@@ -14,11 +14,13 @@ class CacheService:
         self._init_db()
     
     def _init_db(self):
-        """初始化数据库表"""
         os.makedirs(os.path.dirname(DB_PATH) if os.path.dirname(DB_PATH) else ".", exist_ok=True)
         conn = sqlite3.connect(DB_PATH)
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.execute("PRAGMA busy_timeout=5000")
+        conn.execute("PRAGMA synchronous=NORMAL")
         cursor = conn.cursor()
-        
+
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS stock_data (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,7 +37,7 @@ class CacheService:
                 UNIQUE(index_code, date)
             )
         """)
-        
+
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS cache_meta (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -44,12 +46,12 @@ class CacheService:
                 updated_at TEXT DEFAULT CURRENT_TIMESTAMP
             )
         """)
-        
+
         cursor.execute("""
-            CREATE INDEX IF NOT EXISTS idx_stock_data_code_date 
+            CREATE INDEX IF NOT EXISTS idx_stock_data_code_date
             ON stock_data(index_code, date)
         """)
-        
+
         conn.commit()
         conn.close()
     

@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Query
 from typing import Optional
 from datetime import datetime
+import asyncio
 import logging
 
 from app.models.schemas import ChartDataResponse, HealthResponse, TimeRangeRequest
@@ -12,6 +13,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/v1/chart", tags=["chart"])
 
 DEFAULT_INDEX_CODE = "sz.399317"
+_BAOSTOCK_TIMEOUT = 45
 
 
 @router.get("/data", response_model=ChartDataResponse)
@@ -30,8 +32,10 @@ async def get_chart_data(
     - 滚动 5 年最大回撤
     """
     try:
-        # 获取完整历史数据
-        df = baostock_service.update_data(index_code)
+        df = await asyncio.wait_for(
+            asyncio.to_thread(baostock_service.update_data, index_code),
+            timeout=_BAOSTOCK_TIMEOUT
+        )
 
         if df.empty:
             raise HTTPException(status_code=404, detail="未获取到数据")
@@ -59,6 +63,9 @@ async def get_chart_data(
 
         return ChartDataResponse(**chart_data)
 
+    except asyncio.TimeoutError:
+        logger.error("获取图表数据超时")
+        raise HTTPException(status_code=504, detail="数据获取超时，请稍后重试")
     except HTTPException:
         raise
     except Exception as e:
@@ -92,12 +99,14 @@ async def refresh_data(index_code: str = DEFAULT_INDEX_CODE):
     强制从 baostock 获取最新数据
     """
     try:
-        df = baostock_service.fetch_history_data(index_code)
+        df = await asyncio.wait_for(
+            asyncio.to_thread(baostock_service.fetch_history_data, index_code),
+            timeout=_BAOSTOCK_TIMEOUT
+        )
 
         if df.empty:
             raise HTTPException(status_code=404, detail="未获取到数据")
 
-        # 保存到缓存
         records = df.to_dict('records')
         cache_service.save_stock_data(index_code, records)
         cache_service.set_last_update(
@@ -114,6 +123,9 @@ async def refresh_data(index_code: str = DEFAULT_INDEX_CODE):
             }
         }
 
+    except asyncio.TimeoutError:
+        logger.error("刷新数据超时")
+        raise HTTPException(status_code=504, detail="数据刷新超时，请稍后重试")
     except HTTPException:
         raise
     except Exception as e:

@@ -30,23 +30,32 @@ async def get_chart_data(
     - 滚动 5 年最大回撤
     """
     try:
-        # 获取数据
+        # 获取完整历史数据
         df = baostock_service.update_data(index_code)
 
         if df.empty:
             raise HTTPException(status_code=404, detail="未获取到数据")
 
-        # 日期过滤
-        if start_date:
-            df = df[df['date'] >= start_date]
-        if end_date:
-            df = df[df['date'] <= end_date]
-
-        if df.empty:
-            raise HTTPException(status_code=404, detail="指定日期范围内无数据")
-
-        # 计算指标
+        # 计算所有指标（基于完整历史数据，保证 SMA1210 等有足够窗口）
         chart_data = indicator_service.prepare_chart_data(df)
+
+        # 日期过滤（在指标计算之后进行，保证包络线等在全量数据上计算）
+        if start_date:
+            start_idx = next((i for i, d in enumerate(chart_data['dates']) if d >= start_date), None)
+            if start_idx is not None:
+                chart_data = {k: v[start_idx:] if isinstance(v, list) else v
+                              for k, v in chart_data.items()}
+            else:
+                chart_data = {k: ([] if isinstance(v, list) else None) for k, v in chart_data.items()}
+
+        if end_date:
+            end_idx = next((i for i, d in enumerate(chart_data['dates']) if d > end_date), None)
+            if end_idx is not None:
+                chart_data = {k: v[:end_idx] if isinstance(v, list) else v
+                              for k, v in chart_data.items()}
+
+        if not chart_data['dates']:
+            raise HTTPException(status_code=404, detail="指定日期范围内无数据")
 
         return ChartDataResponse(**chart_data)
 

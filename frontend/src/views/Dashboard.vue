@@ -272,11 +272,11 @@ onMounted(() => {
   }
 
   .guide-btn-text {
-    display: none;
+    display: inline;
   }
 
   .guide-btn {
-    padding: 5px 8px;
+    padding: 5px 10px;
   }
 
   .dashboard-main {

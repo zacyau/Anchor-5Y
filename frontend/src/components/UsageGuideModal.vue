@@ -23,7 +23,7 @@
 
           <div class="modal-body">
             <div class="disclaimer-box">
-              <strong>【重要声明】</strong>本内容仅作为投资策略参考，不构成任何具体的投资建议。投资者应根据自身风险承受能力、投资目标和财务状况独立做出投资决策，并自行承担相应风险。
+              <strong>【声明】</strong>本内容仅作为投资策略参考，不构成任何具体的投资建议。投资者应根据自身风险承受能力、投资目标和财务状况独立做出独立的投资决策。
             </div>
 
             <section class="guide-section">
@@ -31,18 +31,18 @@
                 <span class="section-number">一</span>
                 定投策略执行规则
               </h3>
-              <ol class="section-list rule-list">
+              <ol class="rule-list">
                 <li>
-                  当指数点位<strong>低于</strong>其五年均线时：执行<strong>正常定投</strong>计划，按预设标准金额进行定期投资
-                </li>
-                <li>
-                  当指数点位处于五年均线（含）至五年均线<strong>+15%（含）</strong>区间时：执行<strong>减量定投</strong>，建议将定投金额调整为标准金额的50%（或根据个人风险偏好适当调整）
+                  当指数点位在五年均线的包络线上下轨<strong>之间</strong>时：执行<strong>正常定投</strong>计划，按预设标准金额进行定期投资
                 </li>
                 <li>
                   当指数点位<strong>高于</strong>五年均线+15%时：<strong>暂停定投</strong>操作，将原定投资资金暂时配置于货币市场基金或短期债券型基金等低风险产品
                 </li>
                 <li>
-                  当指数点位从高于五年均线+15%的状态<strong>回落至</strong>五年均线以内时：立即<strong>恢复正常定投</strong>计划
+                  当指数点位从高于五年均线+15%的状态<strong>回落至</strong>五年均线以内时：<strong>恢复正常</strong>定投计划
+                </li>
+                <li>
+                  当指数点位<strong>低于</strong>五年均线-15%时：按预设标准金额执行<strong>加倍定投</strong>
                 </li>
               </ol>
             </section>
@@ -52,7 +52,10 @@
                 <span class="section-number">二</span>
                 资产配置与动态平衡策略
               </h3>
-              <ol class="section-list rule-list">
+              <ol class="rule-list">
+                <li>
+                  <strong>固定周期再平衡</strong>，如一年一次、或半年一次
+                </li>
                 <li>
                   当指数点位<strong>显著高于</strong>五年均线+15%以上时：执行<strong>减仓</strong>操作，降低股票类资产配置比例，相应增加债券类资产配置，以降低整体权益风险敞口
                 </li>
